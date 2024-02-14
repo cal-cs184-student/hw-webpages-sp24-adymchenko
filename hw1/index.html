@@ -1,7 +1,103 @@
 <html>
 	<head>
+		<link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
 	</head>
 	<body>
-		Homework 1 index.html here
+		<section>
+			<h2>Task 1</h2>
+			<p>To rasterize triangles, we calculate the bounding box, a.k.a. the smallest rectangle that completely contains
+				a given triangle. We then iterate within the bounding box and calculate a sample point for each pixel. We then
+				check if this sample point lies within the triangle using the point-in-triangle test covered in lecture, then fill
+				the pixel if it is within the triangle.
+			</p>
+			
+			<p>
+				Because the algorithm's iterations are bounded by the dimensions of the bounded box, it must be no worse than checking
+				every sample within the box.
+			</p>
+			<figure>
+				<img alt="basic/test4.svg" src="./hw1t1.PNG" />
+				<figcaption>basic/test4.svg with the default viewing parameters.</figcaption>
+			</figure>
+		</section>
+
+		<section>
+			<h2>Task 2</h2>
+			<p>To implement supersampling, we maintain a sample buffer that is larger than the actual framebuffer. This sample buffer's size is 
+				determined by the sample rate, which indicates how many samples are taken per pixel. 
+				When rasterizing, the algorithm now considers the supersampling grid; for each pixel, we calculate the color for each sample within that pixel, 
+				then average all the samples within it and write the result to the framebuffer. Essentially, we downsample the higher resolution sample buffer 
+				to the target resolution. We also modified triangle rasterization. For each pixel that might be covered by a triangle, the algorithm iterates 
+				over each sample within that pixel and averages them to determine the color of the pixel. This creates smoother looking edges due to being able 
+				to capture the partial coverage of pixels at the edges of triangles that aren't aligned with our pixel grid, which helps us antialias our triangles 
+				and avoid 'jaggies.'
+			</p>
+			<figure>
+				<img alt="basic/test4.svg" src="./hw1t2.PNG" />
+				<figcaption>basic/test4.svg with sample rates 1, 4, and 16.</figcaption>
+			</figure>
+
+		</section>
+
+		<section>
+			<h2>Task 3</h2>
+			<figure>
+				<img alt="my_robot.svg" src="./hw1t3.PNG" />
+				<figcaption>A basic alteration of svg/transforms/robot.svg so that the robot now waves, accomplished by translating each 
+					arm block slightly down or slightly up, for each respective side, rotating each arm block, then rotating each lower arm block.
+				</figcaption>
+			</figure>
+
+		</section>
+		<section>
+			<h2>Task 4</h2>
+			<p>
+				Barycentric coordinates represent a point relative to the vertices of a given triangle, written as (α,β,γ) where α+β+γ=1. In this project, we use 
+				them to find the positions of samples within rasterizable triangles in order to determine those samples' interpolated color or texture coordinates. 
+			</p>
+			<figure>
+				<img alt="my_tri.svg" src="./hw1t4.PNG" />
+				<figcaption>A triangle where each vertex is red, green, and blue respectively. Note the even blending as a result of interpolation using Barycentric coordinates.
+				</figcaption>
+			</figure>
+
+			<figure>
+				<img alt="basic/test7.svg" src="./hw1t4_2.PNG" />
+				<figcaption>basic/test7.svg with default viewing parameters and sample rate 1.
+				</figcaption>
+			</figure>
+
+		</section>
+		<section>
+			<h2>Task 5</h2>
+			<p>
+				Pixel sampling is determining what color to render a pixel based off of sampling a base texture. We do this by mapping the screen space sample coordinates (x,y) into 
+				texture coordinates (u,v), first by calculating the barycentric coordinates, then interpolating them with the given texture (u,v) coordinates. We then perform either 
+				nearest neighbor or bilinear sampling to identify the color of the pixel.
+
+			<p>
+				In nearest neighbor sampling, we find the color of the sample point simply by multiplying the (u,v) coordinates of the sample by the texture dimensions, 
+				then rounding to the nearest possible texture position and returning its color.
+			</p>
+
+			<p>
+				In bilinear sampling, we find every combination of floor/ceiling of the given (u,v) position in order to find the four closest 
+				texture pixels. We then perform linear interpolation to get the weighted average color of those four texture points closest 
+				to the relative position of the sample point and return that color.
+			</p>
+
+		</section>
+
+		<section>
+			<h2>Task 6</h2>
+			<p>
+				Level sampling is determining how to appropriately scale the texture for the given image, using different resolutions of texture per level. For example, at level 0, we use the 
+				original full resolution texture; as the level increases, we use a lower and lower resolution texture. We use either nearest neighbor or bilinear sampling to determine the appropriate 
+				level to use.
+			</p>
+
+
+
+		</section>
 	</body>
 </html>
