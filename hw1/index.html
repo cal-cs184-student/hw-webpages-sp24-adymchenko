@@ -57,7 +57,7 @@
 			</p>
 			<figure>
 				<img alt="my_tri.svg" src="./hw1t4.PNG" />
-				<figcaption>A triangle where each vertex is red, green, and blue respectively. Note the even blending as a result of interpolation using Barycentric coordinates.
+				<figcaption>A triangle where each vertex is red, green, and blue respectively. The color of each interior pixel was computed using barycentric coordinates.
 				</figcaption>
 			</figure>
 
@@ -86,6 +86,23 @@
 				to the relative position of the sample point and return that color.
 			</p>
 
+			<figure>
+				<img alt="nearest sampling at 1 sample/pixel" src="./hw1t5n1.PNG" />
+				<img alt="nearest sampling at 16 samples/pixel" src="./hw1t5n16.PNG" />
+				<img alt="bilinear sampling at 1 sample/pixel" src="./hw1t5b1.PNG" />
+				<img alt="bilinear sampling at 16 samples/pixel" src="./hw1t5b16.PNG" />
+				<figcaption>From top to bottom: nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear sampling at 1 
+					sample per pixel, and bilinear sampling at 16 samples per pixel.
+				</figcaption>
+			</figure>
+
+			<p>
+				The above figure shows how bilinear sampling creates a much smoother looking image overall, especially at sharp corners like that focused by 
+				the pixel inspector. There will be a large difference between the two methods when the rendered texture's details are at a high frequency, e.g. 
+				are 'sharp' or are characterized by a small number of pixels, like the shown corner; nearest neighbor sampling will not capture such patterns as well 
+				as bilinear sampling.
+			</p>
+
 		</section>
 
 		<section>
@@ -96,7 +113,33 @@
 				level to use.
 			</p>
 
+			<p>
+				For pixel sampling, nearest is faster than bilinear since there are no interpolation calculations. Both methods use about the same amount of memory. Bilinear sampling generally has more 
+				antialiasing power than nearest sampling.
+			</p>
 
+			<p>
+				For level sampling, level 0 and nearest sampling are about as fast as one another, while bilinear sampling is slower due to additional interpolation calculations. Nearest and bilinear sampling require about 33%  
+				more memory as level 0 sampling due to having to store the additional levels of textures. Antialiasing power is strongest for bilinear, less strong for nearest, and least strong for level 0.
+			</p>
+
+			<p>
+				Finally, for sample number, speed decreases and memory usage increases as the number of samples per pixel increases. This is because we must store and iterate through a larger sample buffer as the number of samples increases. 
+				Antialiasing power increases as the number of samples increases since more details of the object being rendered can be captured at each pixel.
+			</p>
+
+			<figure>
+				<img alt="L_ZERO and P_NEAREST" src="./hw1t6l0pn.PNG" />
+				<img alt="L_ZERO and P_LINEAR" src="./hw1t6l0pb.PNG" />
+				<img alt="L_NEAREST and P_NEAREST" src="./hw1t6lnpn.PNG" />
+				<img alt="L_NEAREST and P_LINEAR" src="./hw1t6lnpb.PNG" />
+				<figcaption>From top to bottom: L_ZERO and P_NEAREST, L_ZERO and P_LINEAR, L_NEAREST and P_NEAREST, and L_NEAREST and P_LINEAR. Note the increase in antialiasing power with each successive mode.
+				</figcaption>
+			</figure>
+
+			<p>
+				
+			</p>
 
 		</section>
 	</body>
