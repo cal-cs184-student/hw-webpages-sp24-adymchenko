@@ -4,6 +4,28 @@
 	</head>
 	<body>
 		<section>
+			<h2>Overview</h2>
+			<p>
+				In this assignment, we implemented a basic rasterizer for svg files, converting the given vector image to a bitmap image at a 
+				specified resolution, pixel sampling rate, pixel sampling method, and level sampling method. Based on the preexisting implementation 
+				of the point and line rasterization methods, we started by implementing a rasterizer for triangles, then added a sample buffer on top of 
+				the existing pixel buffer to allow us to perform antialiasing.
+			</p>
+
+			<p>
+				We then implemented transforms to allow us to translate, scale, and rotate rasterized polygons based on the transformation matrices 
+				discussed during lecture. For coloring and texturing rasterized triangles, we implemented interpolation using barycentric coordinates and pixel 
+				texture mapping, the latter using two different sampling methods, nearest, and bilinear. Finally, we implemented level sampling, allowing us to 
+				choose appropriate texture scaling using either nearest or linear sampling.
+			</p>
+			<p>
+				Overall, this assignment gave us a better understanding of the exact steps a vector object must go through before reaching its final screenspace 
+				pixel representation, from being 'pre-rasterized' in the sample buffer and having transforms applied to it, to being sampled and written to a pixel. 
+				It was interesting to observe just how much control over the final product some relatively simple techniques could achieve; just by changing each of the 
+				three sampling parameters (sample number, pixel sampling method, level sampling method), there are dozens of different ways to render the same image.
+			</p>
+		</section>
+		<section>
 			<h2>Task 1</h2>
 			<p>To rasterize triangles, we calculate the bounding box, a.k.a. the smallest rectangle that completely contains
 				a given triangle. We then iterate within the bounding box and calculate a sample point for each pixel. We then
