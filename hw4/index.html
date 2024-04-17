@@ -1,7 +1,173 @@
 <html>
 	<head>
+		<link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
 	</head>
 	<body>
-		Homework 4 index.html here
+		<section>
+			<h2>Overview</h2>
+			<p>
+				In this assignment, I created a cloth simulation by modeling it as a mesh made up of point masses connected by structural, 
+				shearing, and bending springs. I then modeled the forces on each mass as a result of these springs as well as gravity, before 
+				continuing on to implementing relatively accurate handling of collisions between the point masses and spheres, planes, and other 
+				point masses, by shifting the position of each mass slightly to stay on top of or separate from the object being collided with. Finally, 
+				I implemented diffuse and Blinn-Phong shading, as well as 2D and mirrored textures, bump mapping, and displacement mapping.
+			</p>
+
+			<p>
+				Overall, there were few major setbacks in completing this project; often, the issues I ran into involved minor things, such as 
+				failing to normalize or flip the direction of a vector, resulting in incorrect collision physics, weak lighting effects when 
+				implementing shaders, etc. I found parts 3 & 4, collisions, the most difficult parts of the project simply because I kept running 
+				into issues like this, and strange behavior like the cloth flying off into the distance or disappearing upon collision with a plane 
+				was somewhat difficult to debug since it was unclear what exactly was causing the issue.
+			</p>
+
+		</section>
+		<section>
+			<h2>Task 1</h2>
+			<p>
+				In this part, I implemented the mesh that makes up our cloth by first determining the coordinates of each point for the 
+				given dimensions and number of points on each axis. This was fairly straightforward; the only issue I ran into was 
+				initially forgetting to cast rand()'s output as a float, which later caused every point to have the same integer z 
+				coordinate rather than the intended random value in the (-1/1000, 1/1000) range. I then proceeded to generate the springs 
+				between the point masses, by iterating through each point mass and generating two structural springs (one to the left and one above),
+				two shearing springs (one on each upper diagonal), and two bending springs (one two points to the left and one two points above).
+			</p>
+			<figure>
+				<img alt="pinned2.json" src="./hw4t1_1.PNG" />
+				<figcaption>pinned2.json with the general mass/spring texture.</figcaption>
+			</figure>
+			<figure>
+				<img alt="pinned2.json structural/bending" src="./hw4t1_woshearing.PNG" />
+				<figcaption>pinned2.json with only structural and bending springs enabled.</figcaption>
+			</figure>
+			<figure>
+				<img alt="pinned2.json shearing" src="./hw4t1_woshearing.PNG" />
+				<figcaption>pinned2.json with only shearing springs enabled.</figcaption>
+			</figure>
+		</section>
+		<section>
+			<h2>Task 2</h2>
+			<p>
+				For this task, I implemented spring physics by iterating through each point mass and applying external forces, such as 
+				gravity, then going through each spring and applying appropriate forces for each of its connected point masses for each timestep. I then 
+				performed Verlet integration to compute each new point mass position from the overall calculated force on each point mass, its mass, and its 
+				current position. I also constrained the movement of these changes so that a spring could not be stretched by more than 10% at each timestep, by
+				moving its connected points back towards their original positions appropriately if they were unpinned.
+			</p>
+			<figure>
+				<img alt="high ks" src="./hw4t2_ks_high.PNG" />
+				<img alt="low ks" src="./hw4t2_ks_low.PNG" />
+				<figcaption>pinned2.json with a high vs. low spring constant ks. The lower the ks, the slower the cloth fell and the 
+					finer the folds were, as shown. This makes sense since a higher spring constant suggests stronger connections between point masses.
+				</figcaption>
+			</figure>
+			<figure>
+				<img alt="high density" src="./hw4t2_density_high.PNG" />
+				<img alt="low density" src="./hw4t2_density_low.PNG" />
+				<figcaption>pinned2.json with a high vs. low density. The lower the density, the slower and more smoothly the cloth fell; 
+					as shown, the cloth folded more noticeably while falling at higher densities. One can compare the low density cloth 
+					to a thin sheet and the high density to a quilt.
+				</figcaption>
+			</figure>
+			<figure>
+				<img alt="high damping" src="./hw4t2_damp_high.PNG" />
+				<img alt="high damping" src="./hw4t2_damp_low.PNG" />
+				<figcaption>pinned2.json with a high vs. low damping constant. Here, the lower the damping constant, the less smoothly 
+					the cloth fell, and it took longer to settle, swinging back and forth before doing so. This makes sense since the lower 
+					the damping constant, the more oscillation the springs experience and the more 'chaotic' the springs' movements should be.
+				</figcaption>
+			</figure>
+		</section>
+		<section>
+			<h2>Task 3</h2>
+			<p>
+				In this task, I handled collisions of particles with planes and spheres. For both objects, this was accomplished by determining if a point mass had 
+				crossed the boundary of the object (e.g. if its current position was on the other side of the plane than its last position / if its current position was 
+				inside the sphere), then bumping the point mass back to the surface of the object. This collision check was performed for every point mass and every sphere/plane combination.
+			</p>
+			<figure>
+				<img alt="ks=500" src="./hw4t3_500.PNG" />
+				<img alt="ks=5000" src="./hw4t3_5000.PNG" />
+				<img alt="ks=50000" src="./hw4t3_50000.PNG" />
+				<figcaption>
+					Sphere collisions at ks=500, ks=5000, and ks=50000. Note how the cloth appears increasingly stiff the higher the spring 
+					constant, and how the folds become coarser and fewer in number. The higher spring constant cloth also settled into a resting state faster.
+				</figcaption>
+			</figure>
+			<figure>
+				<img alt="plane" src="./hw4t3_rest.PNG" />
+				<figcaption>
+					Cloth at rest on the plane.
+				</figcaption>
+			</figure>
+		</section>
+		<section>
+			<h2>Task 4</h2>
+			<figure>
+				<img alt="cloth starting to fall" src="./hw4t4_1.PNG" />
+				<img alt="cloth falling" src="./hw4t4_2.PNG" />
+				<img alt="cloth finished falling" src="./hw4t4_3.PNG" />
+				<figcaption>Screenshots of the cloth falling. Note the folds of the cloth at rest demonstrating correct self-collision.</figcaption>
+			</figure>
+			<figure>
+				<img alt="high density" src="./hw4t4_density_high.PNG" />
+				<img alt="low density" src="./hw4t4_density_low.PNG" />
+				<figcaption>The higher the density, the more relaxed and coarser the folds of the fabric tend to be. This makes sense since 
+					the less dense the cloth, the more it should resemble something like a sheet, since each point mass is lower and the total amount of force each
+					 point experiences is thus lower.
+				</figcaption>
+			</figure>
+			<figure>
+				<img alt="high ks" src="./hw4t4_ks_high.PNG" />
+				<img alt="low ks" src="./hw4t4_ks_low.PNG" />
+				<figcaption>The higher the ks, the smoother and less wrinkled the cloth was, and the faster it seemed to come to rest. This makes sense since the higher the ks, 
+					the more effect each individual spring should have on its neighboring point masses.
+				</figcaption>
+			</figure>
+		</section>
+		<section>
+			<h2>Task 5</h2>
+
+			<p> This project includes both vertex and fragment shaders. Vertex shaders transform the vertices of an object and change their 
+			position and normal vectors to accomplish things like displacement mapping. Fragment shaders operate on the fragments produced after 
+			rasterization, determining their colors based off of the geometric attributes computed by the vertex shader. The GPU then runs these shaders 
+			in parallel to render the object live.</p>
+
+			<p>The Blinn-Phong model uses the vector from a light source to a vertex, the vector from a vertex to a view point, and the vertex's normal in order 
+			to compute ambient, diffuse, and specular shading for a point, then combines each of these three types to create realistic-looking lighting. </p>
+
+			<figure>
+				<img alt="ambient" src="./hw4t5_ambient.PNG" />
+				<img alt="diffuse" src="./hw4t5_diffuse.PNG" />
+				<img alt="specular" src="./hw4t5_specular.PNG" />
+				<img alt="phong" src="./hw4t5_phong.PNG" />
+  				<figcaption>Parts of the Blinn-Phong shading model; ambient, diffuse, specular, and full Blinn-Phong, in order.</figcaption>
+			</figure>
+
+			<figure>
+				<img alt="texture" src="./hw4t5_texture.PNG" />
+				<figcaption>Texture mapping screenshot with a custom texture, namely a portion of the Hubble Deep Field.</figcaption>
+			</figure>
+
+			<figure>
+				<img alt="bump" src="./hw4t5_bump.PNG" />
+				<img alt="bump" src="./hw4t5_bump_cloth.PNG" />
+				<figcaption>Bump mapping for the sphere and cloth.</figcaption>
+			</figure>
+
+			<figure>
+				<img alt="displacement" src="./hw4t5_displacement.PNG" />
+				<figcaption>Displacement mapping for the sphere. Note the visible deformations in the silhouette, as compared to bump mapping, and general more 
+					'organic'/wavy shapes of the texture's contours.
+				</figcaption>
+			</figure>
+
+			<figure>
+				<img alt="mirror cloth" src="./hw4t5_mirror_cloth.PNG" />
+				<img alt="mirror sphere" src="./hw4t5_mirror_sphere.PNG" />
+				<figcaption>Examples of the mirror shader in action for the cloth and sphere.</figcaption>
+			</figure>
+			
+		</section>
 	</body>
 </html>
